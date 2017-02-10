@@ -1,0 +1,66 @@
+<div class="modal fade" id="modal_new_category" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">New category</h4>
+        </div>
+        <div class="modal-body">
+            <form id="new_category_form">
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">Name</label>
+                    <div class="col-lg-10">
+                        <input type='text' id="new_category_name" name='new_category_name'>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type='button' class="btn btn-success" id="btn_new_category">Create</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="modal_edit_category" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Edit category <span id="edit_category_title"></span></h4>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">Name</label>
+                    <div class="col-lg-10">
+                        <input type='text' id="edit_category_name" name='edit_category_name'>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type='button' class="btn btn-warning" data-dismiss="modal" id="btn_edit_category_submit">Confirm Edit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal_delete_category" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Delete category <span id="delete_category_title"></span>?</h4>
+        </div>
+        <div class="modal-body">
+            Are you sure you want to delete <span id="delete_category_text"></span>?
+        </div>
+        <div class="modal-footer">
+            <button type='button' class="btn btn-danger" id="btn_delete_category_submit">Delete</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+    </div>
+  </div>
+</div>

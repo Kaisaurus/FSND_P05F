@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}
+    Katalog Home
+{% endblock %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel-group">
+            {% include "partials/panel_category.html" %}
+            {% include "partials/panel_brands.html" %}
+
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        Products
+        {% include "partials/block_products.html" %}
+        <table class="table table-hover">
+            <tr>
+                <th colspan="2"></th>
+                <th>Name</th>
+            </tr>
+            <tr>
+                <td></td>
+                <td colspan="2">
+                    <a href="{{ url_for('newCategory') }}">
+                        <div class="full-size">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            <span class="add-text">
+                            Add product...
+                            </span>
+
+
+                        </div>
+                    </a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+{% include "partials/modal_category.html" %}
+{% include "partials/modal_products.html" %}
+
+{% endblock %}

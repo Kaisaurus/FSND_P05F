@@ -1,0 +1,38 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <a data-toggle="collapse" href="#block_category" class="panel-title">
+            <span class="glyphicon glyphicon-minus icon_collapse"></span>
+            Categories
+        </a>
+        <a href="#" class="btn  pull-right btn-sm btn-primary" data-toggle="modal" data-target="#modal_new_category">
+            <span class="glyphicon glyphicon-plus"></span>
+            <span class="add-text">Add</span>
+        </a>
+    </div>
+    <div id="block_category" class="panel-collapse collapse in">
+        <div class="panel-body text-center">
+            <table class="table table-bordered filter_table">
+                <tbody id="tbody_category">
+                    {% for i in categories %}
+                    <tr data-id="{{ i.id }}">
+                        <td class="cell_edit">
+                            <a href="#" data-id="{{ i.id }}" class="full-size btn_edit btn_edit_category" data-toggle="modal" data-name="{{ i.name }}" data-target="#modal_edit_category">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+                        </td>
+                        <td class="cell_item">
+                            <a href="#" data-id="{{ i.id }}" class="btn_select_category btn_select full-size">{{ i.name }}</a>
+                        </td>
+                        <td class="cell_delete">
+                            <a href="#" data-id="{{ i.id }}" data-name="{{ i.name }}" class="full-size btn_delete btn_delete_category" data-toggle="modal" data-target="#modal_delete_category">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </a>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
