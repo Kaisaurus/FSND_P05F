@@ -56,9 +56,9 @@
     <footer class="footer">
       <div class="container">
         {% block footer %}
-        <!--
-          <p class="text-muted">&copy; Kaisaurus 67,342,412 B.C.</p>
-        -->
+
+          <p class="text-muted text-center">&copy; Kaisaurus 67,342,412 B.C.</p>
+
         {% endblock %}
       </div>
     </footer>
@@ -68,6 +68,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='utility.js') }}"></script>
     <script src="{{ url_for('static', filename='myjs.js') }}"></script>
-
+    <script src="{{ url_for('static', filename='category-functions.js') }}"></script>
+    <script src="{{ url_for('static', filename='product-functions.js') }}"></script>
   </body>
 </html>

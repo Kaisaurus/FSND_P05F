@@ -6,11 +6,11 @@
             <h4 class="modal-title" id="myModalLabel">New category</h4>
         </div>
         <div class="modal-body">
-            <form id="new_category_form">
+            <form id="new_category_form" class="form-horizontal">
                 <div class="form-group">
-                    <label class="col-lg-2 control-label">Name</label>
+                    <label class="control-label col-md-2">Name</label>
                     <div class="col-lg-10">
-                        <input type='text' id="new_category_name" name='new_category_name'>
+                        <input type='text' id="new_category_name" name='new_category_name' class="form-control">
                     </div>
                 </div>
             </form>
@@ -30,17 +30,17 @@
             <h4 class="modal-title" id="myModalLabel">Edit category <span id="edit_category_title"></span></h4>
         </div>
         <div class="modal-body">
-            <form>
+            <form class="form-horizontal">
                 <div class="form-group">
                     <label class="col-lg-2 control-label">Name</label>
                     <div class="col-lg-10">
-                        <input type='text' id="edit_category_name" name='edit_category_name'>
+                        <input type='text' id="edit_category_name" name='edit_category_name' class="form-control">
                     </div>
                 </div>
             </form>
         </div>
         <div class="modal-footer">
-            <button type='button' class="btn btn-warning" data-dismiss="modal" id="btn_edit_category_submit">Confirm Edit</button>
+            <button type='button' class="btn btn-success" data-dismiss="modal" id="btn_edit_category_submit">Confirm Edit</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         </div>
     </div>

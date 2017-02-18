@@ -67,12 +67,15 @@ class Item(Base):
 
     @property
     def serialize(self):
+        category = None
+        if(self.category):
+            category = self.category.name
+
         return {
+            'id': self.id,
             'name': self.name,
             'description': self.description,
-            'id': self.id,
-            'category': self.category,
-            'brand': self.brand,
+            'category': category,
             'img_url': self.img_url,
         }
 

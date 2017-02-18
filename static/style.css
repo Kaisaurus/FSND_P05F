@@ -41,8 +41,7 @@ h4{
 .full-size{
     width: 100%;
     height: 100%;
-    display: block;
-
+    display: inline-block;
 }
 
 td{
@@ -103,7 +102,8 @@ td{
     border: 1px #333 solid;
 }
 .product_img{
-    margin: 10px;
+    display: block;
+    margin: 10px auto;
     max-height: 100px;
     max-width: 100px;
 }
@@ -112,4 +112,25 @@ td{
     font-size: 60px;
     display:block;
     text-decoration: none !important;
+}
+.modal { overflow: visible !important; }
+.modal-body { overflow-y: visible !important; }
+.btn_edit_product, .btn_delete_product{
+    display: inline-block;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    margin: 5px;
+    top:5px;
+}
+.btn_edit_product{
+    right:40px;
+}
+.btn_delete_product{
+    right: 20px;
+}
+#view_product_img{
+    max-width: 300px;
+    max-height: 300px;
 }

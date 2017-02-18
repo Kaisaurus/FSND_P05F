@@ -1,27 +1,26 @@
 <div id="block_products">
-    <div class="col-md-4 add_product_block">
+    <div class="col-sm-4 add_product_block">
         <div class="product_block_inner">
-            <a href="#" id="btn_add_product" class="full-size">
+            <a href="#" id="btn_add_product" class="full-size" data-toggle="modal" data-target="#modal_new_product">
                 <span class="glyphicon glyphicon-plus add_product_icon"></span>
                 <span class="add_product_title">Add Product</span>
             </a>
         </div>
     </div>
-
-    <div class="col-md-4 product_block">
+    {% for i in products %}
+    <div class="col-xs-4 product_block" data-id="{{ i.id }}">
         <div class="product_block_inner">
-            <a href="#" class="btn_product full-size">
-                <img class="product_img" src="http://placehold.it/100/CA386C/0000000">
-                <span class="product_title">wubalubadubdub</span>
+            <a href="#" class="btn_product  full-size" data-id="{{ i.id }}"  data-name="{{ i.name }}">
+                <img class="product_img " src="{{ exists(i.img_url, 'http://placehold.it/100/CA386C/0000000') }}">
+                <span class="product_title">{{ i.name }}</span>
+            </a>
+            <a href="#" data-id="{{ i.id }}" class="btn_edit btn_edit_product" data-name="{{ i.name }}">
+                <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+            <a href="#" data-id="{{ i.id }}" data-name="{{ i.name }}" class="btn_delete btn_delete_product" data-toggle="modal" data-target="#modal_delete_product">
+                <span class="glyphicon glyphicon-trash"></span>
             </a>
         </div>
     </div>
-    <div class="col-md-4 product_block">
-        <div class="product_block_inner">
-            <a href="#" class="btn_product full-size">
-                <img class="product_img" src="http://placehold.it/100/CA386C/0000000">
-                <span class="product_title">wubalubadubdub</span>
-            </a>
-        </div>
-    </div>
+    {% endfor %}
 </div>
