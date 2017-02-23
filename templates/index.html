@@ -3,45 +3,34 @@
     Katalog Home
 {% endblock %}
 {% block content %}
-
+<div class="row">
+    <div id="block_msg" class="hidden alert alert-info" role="alert">
+        <span id="block_msg_text"></span>
+        <button type="button" class="close btn_hide_parent" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    </div>
+    <div id="block_error_msg" class="hidden alert alert-danger" role="alert">
+        <span id="block_error_msg_text"></span>
+        <button type="button" class="close btn_hide_parent" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-4">
         <div class="panel-group">
-
+            <div id="block_categories_outer">
             {% include "partials/panel_category.html" %}
-            {% include "partials/panel_brands.html" %}
-
+            </div>
         </div>
     </div>
 
     <div class="col-md-8">
         Products
-        {% include "partials/block_products.html" %}
-        <table class="table table-hover">
-            <tr>
-                <th colspan="2"></th>
-                <th>Name</th>
-            </tr>
-            <tr>
-                <td></td>
-                <td colspan="2">
-                    <a href="{{ url_for('newCategory') }}">
-                        <div class="full-size">
-                            <span class="glyphicon glyphicon-plus"></span>
-                            <span class="add-text">
-                            Add product...
-                            </span>
-
-
-                        </div>
-                    </a>
-                </td>
-            </tr>
-        </table>
+        <div id="block_products_outer">
+            {% include "partials/block_products.html" %}
+        </div>
     </div>
 </div>
 
 {% include "partials/modal_category.html" %}
 {% include "partials/modal_products.html" %}
-
+{% include "partials/modal_login.html" %}
 {% endblock %}

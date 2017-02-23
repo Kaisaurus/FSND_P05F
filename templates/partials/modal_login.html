@@ -1,0 +1,38 @@
+<div class="modal fade" id="modal_login" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="view_product_title">Login</h4>
+        </div>
+        <div class="modal-body">
+            <div id="login_result">
+
+            </div>
+            <div id="login_welcome" class="hidden">
+                <h3>
+                Welcome, <span id="welcome_username"></span>!
+                </h3>
+                <img src="" id="welcome_picture" style="width: 100px; height: 100px; border-radius: 150px;-webkit-border-radius: 150px; -moz-border-radius: 150px;">
+            </div>
+            <div id="signInButton">
+                <span class="g-signin"
+                    data-scope="openid email"
+                    data-clientid="747131616464-jhk219tbq0jnaprebgbet4s7vn4q68jp.apps.googleusercontent.com"
+                    data-redirecturi="postmessage"
+                    data-accesstype="offline"
+                    data-cookiepolicy="single_host_origin"
+                    data-callback="signInCallback"
+                    data-approvalprompt="force">
+                </span>
+            </div>
+            <button>
+                <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();">
+                    <a href='javascript:sendTokenToServer()'>Facebook Login</a>
+                </fb:login-button>
+            </button>
+            <br>
+        </div>
+    </div>
+  </div>
+</div>

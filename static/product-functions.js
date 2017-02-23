@@ -1,14 +1,74 @@
-// view product functionality
-$('.btn_product').on('click', function(e){
-    var product_id = $(this).attr("data-id");
-    getProduct(product_id,'view');
+$(document).ready(function(){
+    bindProductBlockFunctions();
+    bindProductModalFunctions();
 });
+
+function bindProductBlockFunctions(){
+    $('.btn_product').on('click', function(e){
+        var product_id = $(this).attr("data-id");
+        getProduct(product_id,'view');
+    });
+
+    $('.btn_edit_product').on('click', function(e){
+        var product_id = $(this).attr("data-id");
+        getProduct(product_id,'edit');
+    });
+
+    $('.btn_delete_product').on('click', function(e){
+        var product_name = $(this).attr("data-name");
+        $('#delete_product_text').html(product_name);
+        $('#delete_product_title').html(product_name);
+        $('#btn_delete_product_submit').attr('data-id', $(this).attr("data-id"));
+    });
+
+}
+
+function bindProductModalFunctions(){
+    $('#btn_new_category').on('click', function(e){
+        e.preventDefault();
+        submit_new_category();
+    });
+
+    $('#btn_edit_product_submit').on('click', function(e){
+        e.preventDefault();
+        submit_edit_product($(this).attr('data-id'));
+    });
+
+    $('#btn_delete_product_submit').on('click', function(e){
+        e.preventDefault();
+        submit_delete_product($(this).attr('data-id'));
+    });
+
+    $('#btn_new_product_submit').on('click', function(e){
+        e.preventDefault();
+        submit_new_product();
+    });
+}
+
+function refreshProducts(){
+    var selectedCategories = []
+    if($(".btn_select_selected")){
+        $(".btn_select_selected").each( function( index, element ){
+            selectedCategories.push($( this ).attr('data-id'));
+        });
+    }
+    $.ajax({
+        type: 'GET',
+        url: '/products?category_id='+selectedCategories.join(),
+        success: function(response){
+            $('#block_products_outer').html(response);
+            bindProductBlockFunctions();
+        },
+        error: function(error){
+            flashErrorMsg(error.msg, 'refreshProducts');
+        }
+    });
+}
 
 function getProduct(product_id,type){
     $.ajax({
         type: 'GET',
         dataType: "json",
-        contentType: "application/json; charset=utf-8",
         url: '/products/'+product_id+'/JSON',
         success: function(response){
             if(type == 'view'){
@@ -25,7 +85,7 @@ function getProduct(product_id,type){
             if(type == 'edit'){
                 $('#edit_product_name').val(response.product.name);
                 $('#edit_product_title').html(response.product.name);
-                $('#edit_product_category').val(response.product.category);
+                $('#edit_product_category').val(response.product.category_id);
                 $('#edit_product_description').html(response.product.description);
                 $('#edit_product_img_url').val(response.product.img_url);
                 $('#btn_edit_product_submit').attr('data-id', product_id);
@@ -33,22 +93,11 @@ function getProduct(product_id,type){
             }
         },
         error: function(error){
-            flashErrorMsg(error.msg);
+            flashErrorMsg(error.msg, 'getProduct');
         }
     });
 }
 
-// edit product functionality
-$('.btn_edit_product').on('click', function(e){
-    var product_id = $(this).attr("data-id");
-    getProduct(product_id,'edit');
-});
-
-
-$('#btn_edit_product_submit').on('click', function(e){
-    e.preventDefault();
-    submit_edit_product($(this).attr('data-id'));
-});
 
 
 function submit_edit_product(product_id){
@@ -69,23 +118,25 @@ function submit_edit_product(product_id){
             contentType: "application/json; charset=utf-8",
             url: '/edit_product',
             success: function(response){
-                updateProductDOM(product_name, product_id, img_url);
+                category_name = $('#edit_product_category option:selected' ).text();
+                updateProductDOM(product_name, product_id, img_url, category_name);
                 $("#modal_edit_product").modal('hide');
                 flashMsg(response.msg);
 
             },
             error: function(error){
-                flashErrorMsg(error.msg);
+                flashErrorMsg(error.msg, 'submit_edit_product');
             }
         });
     }
 }
 
-function updateProductDOM(name, id, img_url){
-    $('#block_products').find("a.btn_product[data-id='"+id+"']")
+function updateProductDOM(name, id, img_url, category){
+    $("a.btn_product[data-id='"+id+"']")
     .attr('data-id', id)
     .attr('data-name', name);
-    $('#block_products').find(".product_title").html(name);
+    $("a.btn_product[data-id='"+id+"']").find('.product_title').html(name);
+    $("a.btn_product[data-id='"+id+"']").find('.product_category').html('[ '+category+' ]');
     $('#block_products').find("a.btn_delete[data-id='"+id+"']")
     .attr('data-id', id)
     .attr('data-name', name);
@@ -93,24 +144,12 @@ function updateProductDOM(name, id, img_url){
     .attr('data-id', id)
     .attr('data-name', name);
 
+
     img = $(".btn_product[data-id='"+id+"']").children(".product_img");
     replaceImg(img, img_url, 'http://placehold.it/100/CA386C/0000000');
 }
 
 // Delete product functionality
-
-$('.btn_delete_product').on('click', function(e){
-    var product_name = $(this).attr("data-name");
-    $('#delete_product_text').html(product_name);
-    $('#delete_product_title').html(product_name);
-    $('#btn_delete_product_submit').attr('data-id', $(this).attr("data-id"));
-});
-
-$('#btn_delete_product_submit').on('click', function(e){
-    e.preventDefault();
-    submit_delete_product($(this).attr('data-id'));
-});
-
 
 function submit_delete_product(id){
     // Ajax call to send delete item to the backend
@@ -126,19 +165,13 @@ function submit_delete_product(id){
             flashMsg(response.msg);
         },
         error: function(error) {
-            flashErrorMsg(error.msg);
+            flashErrorMsg(error.msg, 'submit_delete_product');
         }
     });
 }
 
 
 // New product functionality
-
-$('#btn_new_product_submit').on('click', function(e){
-    e.preventDefault();
-    submit_new_product();
-});
-
 
 function submit_new_product(){
     // Ajax call to send new item to the backend
@@ -158,7 +191,9 @@ function submit_new_product(){
             contentType: "application/json; charset=utf-8",
             url: '/new_product',
             success: function(response) {
-                cloneProductItem(product_name, response.id, img_url);
+                category_name = $('#edit_product_category option:selected' ).text();
+                //cloneProductItem(product_name, response.id, img_url, category_name);
+                refreshProducts();
                 $("#modal_new_product").modal('hide');
                 resetField('#new_product_category');
                 resetField('#new_product_description');
@@ -166,17 +201,19 @@ function submit_new_product(){
                 flashMsg(response.msg);
             },
             error: function(error) {
-                flashErrorMsg(error.msg);
+                flashErrorMsg(error.msg, 'submit_new_product');
             }
         });
     }
 }
 
-function cloneProductItem(name, id, img_url){
+function cloneProductItem(name, id, img_url, category){
     var item = $('#block_products').children(":nth-child(2)").clone(true,true);
     $('#block_products').children(":nth-child(2)").before(item)
     item.find(".product_title").html(name);
-    item.find(".product_img").attr('src',checkImg(img_url));
+    item.find('.product_category').html('[ '+category+' ]');
+    img = item.find(".product_img");
+    replaceImg(img, img_url, 'http://placehold.it/100/CA386C/0000000');
     item.find('a').attr('data-id', id).attr('data-name', name);
     item.attr('data-id', id);
 }

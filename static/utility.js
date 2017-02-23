@@ -1,3 +1,8 @@
+$(document).ready(function(){
+    $('.btn_hide_parent').on('click',function(){
+        $(this).parent().addClass('hidden');
+    });
+});
 
 function replaceImg(img, img_url, placeholder){
     $(img).one('error', function() {
@@ -24,11 +29,17 @@ function resetField(field){
     $(field).val("");
 }
 
-function flashErrorMsg(msg){
-    console.log("'Woops... something went wrong. ERROR: " + msg);
+function flashErrorMsg(msg, errorFunction='undefined'){
+    $('#block_msg').addClass('hidden');
+    $('#block_error_msg').removeClass('hidden');
+    $('#block_error_msg_text').html("Error in "+errorFunction+' function: "' + msg+'"');
+    console.log("Error in "+errorFunction+' function: "' + msg+'"');
 }
 
 function flashMsg(msg){
+    $('#block_error_msg').addClass('hidden');
+    $('#block_msg').removeClass('hidden');
+    $('#block_msg_text').html(msg);
     console.log(msg);
 }
 

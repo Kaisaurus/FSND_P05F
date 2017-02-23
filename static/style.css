@@ -6,6 +6,8 @@ h1{
 }
 h4{
     color: #222;
+    text-align: center;
+    font-weight: bold;
 }
 .navbar-default{
     /*
@@ -93,7 +95,7 @@ td{
 .product_block, .add_product_block{
     margin: 15px 0;
     text-align: center;
-    height: 150px;
+    height: 170px;
 }
 .product_block_inner{
     width: 100%;
@@ -131,6 +133,18 @@ td{
     right: 20px;
 }
 #view_product_img{
+    display: block;
+    margin: auto;
     max-width: 300px;
     max-height: 300px;
+}
+#btn_logout{
+    display: inline-block;
+}
+.cell_delete, .cell_edit{
+    width: 50px;
+}
+
+dl {
+    margin-top: 20px;
 }

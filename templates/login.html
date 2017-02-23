@@ -6,10 +6,14 @@
     Login
 {% endblock %}
 {% block content %}
+
+<div id="login_result">
+</div>
+
 <div id="signInButton">
     <span class="g-signin"
         data-scope="openid email"
-        data-clientid="747131616464-n4rspdgdb90ma73l9ntc931c00gj9k49.apps.googleusercontent.com"
+        data-clientid="747131616464-jhk219tbq0jnaprebgbet4s7vn4q68jp.apps.googleusercontent.com"
         data-redirecturi="postmessage"
         data-accesstype="offline"
         data-cookiepolicy="single_host_origin"
@@ -17,8 +21,7 @@
         data-approvalprompt="force">
     </span>
 </div>
-<div id="result">
-</div>
+
 
 
 <button>
@@ -27,18 +30,19 @@
     </fb:login-button>
 </button>
 <br>
+
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+
 <!--
-<a class="btn  btn-social btn-sm btn-github" href="https://github.com/login/oauth/authorize?scope=user:email&client_id=95bc8d84eb5500144718"><span class="fa fa-github"></span>Sign in with GitHub</a>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 -->
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script src="//apis.google.com/js/platform.js?onload=start"> </script>
 
-<!--
-<script type="text/javascript" src="/static/loging.js"></script>
--->
 <script type="text/javascript">
-
+// Google OAuth2 login code
 function signInCallback(authResult){
     if(authResult['code']){
         $('#signinButton').hide();
@@ -50,25 +54,23 @@ function signInCallback(authResult){
             data:authResult['code'],
             success:function(result){
                 if(result){
-                    $('#result').html('Login Successfull'+ result)
+                    $('#login_result').html(result);
+                    /*
                     setTimeout(function(){
                         window.location.href = '/restaurants';
                     }, 4000);
+                    */
                 } else if(authResult['error']){
-                    console.log('error:'+authResult['error'])
+                    flashErrorMsg('error:'+authResult['error'])
                 } else {
-                    $('#result').html('ERROR no server side call check config and console')
+                    flashErrorMsg('ERROR no server side call check config and console')
                 }
             }
 
         });
     }
 }
-</script>
-<!--
-<script type="text/javascript" src="/static/loginfb.js"></script>
--->
-<script type="text/javascript">
+// Facebook OAuth2 login code
 window.fbAsyncInit = function() {
     FB.init({
       appId      : '1649736768663631',

@@ -7,6 +7,7 @@
         </div>
         <div class="modal-body">
             <img id="view_product_img" class="block-center" src="http://placehold.it/300/CA386C/0000000">
+            <h4 class="modal-title" id="view_product_title">View product</h4>
             <dl class="dl-horizontal">
                 <dt>Name</dt>
                 <dd id="view_product_name"></dd>
@@ -47,7 +48,7 @@
                     <div class="col-md-10">
                         <select type='text' id="new_product_category" class="form-control" name='new_product_category'>
                         {% for i in categories %}
-                            <option value="{{ i.id }}">{{ i.name }}</option>}
+                            <option value="{{ i.id }}">{{ i.name }}</option>
                         {% endfor %}
                         </select>
                     </div>
@@ -97,7 +98,7 @@
                 <div class="form-group">
                     <label class="col-md-2 control-label">Category</label>
                     <div class="col-md-10">
-                        <select type='text' id="new_product_category" class="form-control" name='new_product_category'>
+                        <select type='text' id="edit_product_category" class="form-control" name='edit_product_category'>
                         {% for i in categories %}
                             <option value="{{ i.id }}">{{ i.name }}</option>}
                         {% endfor %}
@@ -117,7 +118,7 @@
         </div>
         </div>
         <div class="modal-footer">
-            <button type='button' class="btn btn-success" id="btn_edit_product_submit">Create</button>
+            <button type='button' class="btn btn-success" id="btn_edit_product_submit">Edit</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         </div>
     </div>

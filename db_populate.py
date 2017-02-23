@@ -8,8 +8,8 @@ from db_setup import *
 def load_default_data(session):
     '''  Loads dummy data given an using an sqlalchemy session '''
 
-    company_1 = Company(
-        name="Shirt.Woot", siteuri="http://shirt.woot.com/")
+    company_1 = Category(
+        name="Shirt.Woot")
     session.add(company_1)
 
     sales_item_0 = SalesItem(

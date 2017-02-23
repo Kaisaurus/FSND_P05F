@@ -16,7 +16,24 @@ class User(Base):
     fb_id = Column(String(250))
 
 
+class Category(Base):
+    __tablename__ = 'category'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+
+    @property
+    def serialize(self):
+        return {
+            'name': self.name,
+            'id': self.id,
+        }
+
+
 class Brand(Base):
+    # Brand is currently not in use, this can be used with future functionality
     __tablename__ = 'brand'
 
     id = Column(Integer, primary_key=True)
@@ -36,22 +53,6 @@ class Brand(Base):
         }
 
 
-class Category(Base):
-    __tablename__ = 'category'
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
-    user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
-
-    @property
-    def serialize(self):
-        return {
-            'name': self.name,
-            'id': self.id,
-        }
-
-
 class Item(Base):
     __tablename__ = 'item'
     id = Column(Integer, primary_key=True)
@@ -67,15 +68,11 @@ class Item(Base):
 
     @property
     def serialize(self):
-        category = None
-        if(self.category):
-            category = self.category.name
-
         return {
             'id': self.id,
             'name': self.name,
             'description': self.description,
-            'category': category,
+            'category_id': self.category_id,
             'img_url': self.img_url,
         }
 

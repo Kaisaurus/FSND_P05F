@@ -1,18 +1,66 @@
+$(document).ready(function(){
+    bindCategoryBlockFunctions();
+    bindCategoryModalFunctions();
+});
+
+function bindCategoryBlockFunctions(){
+    $('.btn_select').on('click', function(e){
+        e.preventDefault();
+        $(this).toggleClass("btn_select_selected");
+        refreshProducts();
+    });
+
+    $('.btn_edit_category').on('click', function(e){
+        var category_name = $(this).attr("data-name");
+        flashMsg(category_name);
+        $('#edit_category_name').val(category_name);
+        $('#edit_category_title').html(category_name);
+        $('#btn_edit_category_submit').attr('data-id', $(this).attr("data-id"));
+    });
+
+
+    $('.btn_delete_category').on('click', function(e){
+        var category_name = $(this).attr("data-name");
+        $('#delete_category_text').html(category_name);
+        $('#delete_category_title').html(category_name);
+        $('#btn_delete_category_submit').attr('data-id', $(this).attr("data-id"));
+    });
+
+}
+
+function bindCategoryModalFunctions(){
+    $('#btn_edit_category_submit').on('click', function(e){
+        e.preventDefault();
+        submit_edit_category($(this).attr('data-id'));
+    });
+
+
+    $('#btn_delete_category_submit').on('click', function(e){
+        e.preventDefault();
+        submit_delete_category($(this).attr('data-id'));
+    });
+
+}
+
+function refreshCategories(){
+    $.ajax({
+        type: 'GET',
+        url: '/categories',
+        success: function(response){
+            $('#block_categories_outer').html(response);
+            bindCategoryBlockFunctions();
+        },
+        error: function(error){
+            flashErrorMsg(error.msg, 'refreshCategories');
+        }
+    });
+}
+
+// uses the filter table plug-in so a search filter can be used
+$('.filter_table').filterTable({minRows: 0});
+
 
 // edit category functionality
-$('.btn_edit_category').on('click', function(e){
-    var category_name = $(this).attr("data-name");
-    flashMsg(category_name);
-    $('#edit_category_name').val(category_name);
-    $('#edit_category_title').html(category_name);
-    $('#btn_edit_category_submit').attr('data-id', $(this).attr("data-id"));
-});
-
-$('#btn_edit_category_submit').on('click', function(e){
-    e.preventDefault();
-    submit_edit_category($(this).attr('data-id'));
-});
-
 
 function submit_edit_category(id){
     // Ajax call to send new item to the backend
@@ -30,27 +78,13 @@ function submit_edit_category(id){
                 flashMsg(response.msg);
             },
             error: function(error){
-                flashErrorMsg(error.msg);
+                flashErrorMsg(error.msg, 'submit_edit_category');
             }
         });
     }
 }
 
 // Delete category functionality
-
-$('.btn_delete_category').on('click', function(e){
-    var category_name = $(this).attr("data-name");
-    $('#delete_category_text').html(category_name);
-    $('#delete_category_title').html(category_name);
-    $('#btn_delete_category_submit').attr('data-id', $(this).attr("data-id"));
-});
-
-$('#btn_delete_category_submit').on('click', function(e){
-    e.preventDefault();
-    submit_delete_category($(this).attr('data-id'));
-});
-
-
 function submit_delete_category(id){
     // Ajax call to send delete item to the backend
     $.ajax({
@@ -59,25 +93,24 @@ function submit_delete_category(id){
         dataType: "json",
         contentType: "application/json; charset=utf-8",
         url: '/delete_category',
-        success: function(response) {
-            removeElementByDataID(response.id, 'tr', '#tbody_category');
+        success: function(response){
+            if(response.success == 0){
+                flashErrorMsg(response.msg, 'submit_delete_category');
+            }else{
+                $('option[value="'+id+'"]').remove();
+                removeElementByDataID(response.id, 'tr', '#tbody_category');
+                flashMsg(response.msg);
+            }
             $("#modal_delete_category").modal('hide');
-            flashMsg(response.msg);
         },
         error: function(error) {
-            flashErrorMsg(error.msg);
+            flashErrorMsg(error.msg, 'submit_delete_category');
         }
     });
 }
 
 
 // New category functionality
-
-$('#btn_new_category').on('click', function(e){
-    e.preventDefault();
-    submit_new_category();
-});
-
 
 function submit_new_category(){
     // Ajax call to send new item to the backend
@@ -90,13 +123,14 @@ function submit_new_category(){
             contentType: "application/json; charset=utf-8",
             url: '/new_category',
             success: function(response) {
-                cloneCategoryItem(category_name, response.id);
+                //cloneCategoryItem(category_name, response.id);
+                refreshCategories();
                 $("#modal_new_category").modal('hide');
                 resetField('#new_category_name');
                 flashMsg(response.msg);
             },
             error: function(error) {
-                flashErrorMsg(error.msg);
+                flashErrorMsg(error.msg, 'submit_new_category');
             }
         });
     }
@@ -121,4 +155,5 @@ function cloneCategoryItem(name, id){
     item.find(".btn_select").html(name);
     item.find('a').attr('data-id', id).attr('data-name', name);
     item.attr('data-id', id);
+    $('#new_product_category').prepend('<option value="'+id+'">'+name+'</option>');
 }

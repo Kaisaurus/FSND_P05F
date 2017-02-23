@@ -1,74 +1,74 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>
-    {% block title %}{% endblock %}
-     - FSND Project</title>
-    {% endblock %}
-  </head>
-  <body>
-  <nav class="navbar navbar-default">
-    <div class="container">
-      <!-- Brand and toggle get grouped for better mobile display -->
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="/">
-          Katalog <span class="glyphicon glyphicon-thumbs-up"></span>
-        </a>
-      </div>
-
-      <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse" id="navbar-collapse-1">
-        <ul class="nav navbar-nav navbar-right">
-          {% if user %}
-            <p class="navbar-text">Logged in as {{ user.name }}</p>
-            <li><img class="profile-pic-sm" src="{{ user.picture }}"></li>
-            <li><a href="{{url_for('disconnect')}}">Logout</a></li>
-          {% else %}
-            <li><a href="{{url_for('showLogin')}}">Login</a></li>
-          {% endif %}
-        </ul>
-      </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
-  </nav>
-    <div class="container">
-    {% with messages = get_flashed_messages() %}
-
-      {% if messages %}
-          {% for message in messages %}
-          <div class="alert alert-warning" role="alert">{{message}}</div>
-          {% endfor %}
-      {% endif %}
-
-    {% endwith %}
-    {% block content %}{% endblock %}
-    </div>
-    <footer class="footer">
-      <div class="container">
-        {% block footer %}
-
-          <p class="text-muted text-center">&copy; Kaisaurus 67,342,412 B.C.</p>
-
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        {% block head %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <title>
+        {% block title %}{% endblock %}
+         - FSND Project</title>
         {% endblock %}
-      </div>
-    </footer>
-    <script src="http://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="  crossorigin="anonymous"></script>
-    <!-- <script src="{{ url_for('static', filename='autoNumeric.min.js') }}"></script> -->
-    <script src="{{ url_for('static', filename='jquery.filtertable.min.js') }}"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script src="{{ url_for('static', filename='utility.js') }}"></script>
-    <script src="{{ url_for('static', filename='myjs.js') }}"></script>
-    <script src="{{ url_for('static', filename='category-functions.js') }}"></script>
-    <script src="{{ url_for('static', filename='product-functions.js') }}"></script>
-  </body>
+    </head>
+    <body>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">
+                    Katalog <span class="glyphicon glyphicon-thumbs-up"></span>
+                </a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="{% if not user %} hidden {% endif %}" id="section_logged_in">
+                        <p class="navbar-text">Logged in as <span id="nav_login_username">{{ user.name }}</span></p>
+                        <img class="profile-pic-sm" id="nav_login_picture" src="{{ user.picture }}">
+                        <a href="#" id="btn_logout">Logout</a>
+                    </li>
+                    <li id="section_not_logged_in" class="{% if user %} hidden {% endif %}"><a data-state="{{ state }}" id="btn_login" href="#" data-toggle="modal" data-target="#modal_login">Login</a></li>
+
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+        <div class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-warning" role="alert">{{message}}</div>
+                    {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+        </div>
+        <footer class="footer">
+            <div class="container">
+                {% block footer %}
+
+                    <p class="text-muted text-center">&copy; Kaisaurus 67,342,412 B.C.</p>
+
+                {% endblock %}
+            </div>
+        </footer>
+        {% block scripts %}
+        <script src="http://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="    crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='jquery.filtertable.min.js') }}"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='utility.js') }}"></script>
+        <script src="{{ url_for('static', filename='category-functions.js') }}"></script>
+        <script src="{{ url_for('static', filename='product-functions.js') }}"></script>
+        <script src="{{ url_for('static', filename='login.js') }}"></script>
+        <script src="//apis.google.com/js/platform.js?onload=start"> </script>
+        {% endblock %}
+    </body>
 </html>
