@@ -148,3 +148,31 @@ td{
 dl {
     margin-top: 20px;
 }
+
+.fa{
+    font-size: 24px;
+    color: #fff;
+}
+
+.btn-fb{
+    color: #fff;
+    background-color: #3b5998;
+}
+
+.btn-fb:hover{
+    color: #fff;
+    background-color: #8b9dc3;
+}
+
+/* not used
+.btn-gp{
+    color: #fff;
+    background-color: #ff4343;
+}
+
+.btn-gp:hover{
+    color: #fff;
+    background-color: #ff5d5d;
+
+}
+*/

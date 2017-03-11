@@ -30,13 +30,17 @@ function loginSuccessful(username, picture){
     $('#login_welcome').removeClass('hidden')
     $('#welcome_picture').attr('src',picture);
     $('#welcome_username').html(username);
+    $('#login_btns').addClass('hidden');
     $('#nav_login_username').html(username);
     $('#nav_login_picture').attr('src',picture);
     checkLogin();
     setTimeout(function(){
         $('#modal_login').modal('hide');
-        $('#login_welcome').addClass('hidden')
     }, 3000);
+    setTimeout(function(){
+        $('#login_btns').removeClass('hidden');
+        $('#login_welcome').addClass('hidden')
+    }, 5000);
 }
 
 // Google OAuth2 login code

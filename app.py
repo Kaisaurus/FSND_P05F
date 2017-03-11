@@ -11,6 +11,7 @@ from sqlalchemy.orm import sessionmaker
 from db_setup import Base, Category, Brand, Item, User
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
+from os import path
 
 # from handlers.bloghandler import BlogHandler
 
@@ -229,16 +230,6 @@ def editCategory():
                            msg='Category '+oldName+' changed to '+newName+'.')
         except Exception, e:
             return jsonify(success=0, msg=str(e))
-
-'''
-@app.route('/login')
-def showLogin():
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                    for x in xrange(32))
-    login_session['state'] = state
-    return render_template('login.html',
-                           STATE=state)
-'''
 
 
 @app.route('/gconnect', methods=['POST'])
@@ -501,6 +492,8 @@ def createUser(login_session):
     return user.id
 
 if __name__ == '__main__':
-    app.debug = True
-    app.secret_key = 'super_secret_key'
+    app.config.update(
+        TEMPLATES_AUTO_RELOAD=True,
+        DEBUG=True,
+        SECRET_KEY='super_secret_key')
     app.run(host='0.0.0.0', port=5000)
