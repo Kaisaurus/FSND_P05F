@@ -39,5 +39,5 @@ python app.py
 6. If all setup is correct the site is reachable by going to [Dhttp://localhost:5000](http://localhost:5000)
 *If the port is changed from 5000 the oauth2 functionality will probably not work*
 7. login to the app using your Google or Facebook account
-8. Enjoy the reviewing proces
+
 ---
