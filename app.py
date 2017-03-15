@@ -35,7 +35,7 @@ def utility_processor():
                 return path
             else:
                 return placeholder
-        except:
+        except Exception as e:
             return placeholder
     return dict(exists=exists)
 
@@ -52,7 +52,7 @@ def showHome():
     # check if user is logged in
     try:
         user = getUserInfo(getSessionUserID())
-    except:
+    except Exception as e:
         user = None
 
     # pass a state string for extra security
@@ -73,7 +73,7 @@ def showCategories():
     # check if user is logged in
     try:
         user = getUserInfo(getSessionUserID())
-    except:
+    except Exception as e:
         user = None
 
     categories = list(reversed(session.query(Category).all()))
@@ -97,7 +97,7 @@ def showProducts():
         # check if user is logged in
         try:
             user = getUserInfo(getSessionUserID())
-        except:
+        except Exception as e:
             user = None
 
         return render_template('partials/block_products.html',
@@ -230,16 +230,6 @@ def editCategory():
         except Exception, e:
             return jsonify(success=0, msg=str(e))
 
-'''
-@app.route('/login')
-def showLogin():
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                    for x in xrange(32))
-    login_session['state'] = state
-    return render_template('login.html',
-                           STATE=state)
-'''
-
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
@@ -304,7 +294,7 @@ def gconnect():
 
     # Store the access token in the session for later use.
     login_session['provider'] = 'google'
-    login_session['credentials'] = credentials
+    login_session['credentials'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
 
     # Get user info
@@ -382,11 +372,6 @@ def fbconnect():
 
     return jsonify(username=login_session['username'],
                    picture=login_session['picture'])
-    '''
-    return render_template('welcome.html',
-                           username=login_session['username'],
-                           picture=login_session['picture'])
-    '''
 
 
 @app.route('/fbdisconnect')
@@ -400,13 +385,13 @@ def fbdisconnect():
 @app.route('/gdisconnect')
 def gdisconnect():
     credentials = login_session.get('credentials')
-
     if credentials is None:
         response = make_response(
             json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         print response
-    access_token = credentials.access_token
+
+    access_token = credentials
     url = 'https://accounts.google.com/o/oauth2/revoke?token={}'.format(
         access_token)
     h = httplib2.Http()
@@ -447,7 +432,7 @@ def getSessionUserID():
     try:
         user_id = login_session['user_id']
         return user_id
-    except:
+    except Exception as e:
         return None
 
 # API endpoint (GET request)
@@ -469,7 +454,7 @@ def getFbUserID(fb_id):
     try:
         user = session.query(User).filter_by(fb_id=fb_id).one()
         return user.id
-    except:
+    except Exception as e:
         return None
 
 
@@ -477,7 +462,7 @@ def getUserID(email):
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
-    except:
+    except Exception as e:
         return None
 
 
@@ -489,7 +474,7 @@ def getUserInfo(user_id):
 def createUser(login_session):
     try:
         fb_id = login_session['facebook_id']
-    except:
+    except Exception as e:
         fb_id = ""
     newUser = User(name=login_session['username'],
                    email=login_session['email'],
@@ -499,6 +484,7 @@ def createUser(login_session):
     session.commit()
     user = session.query(User).filter_by(email=login_session['email']).one()
     return user.id
+
 
 if __name__ == '__main__':
     app.debug = True
