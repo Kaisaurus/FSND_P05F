@@ -10,6 +10,7 @@ function checkLogin(){
     }
 }
 
+
 $('#btn_logout').on('click',function(e){
     $.ajax({
         type: 'GET',
@@ -27,7 +28,7 @@ $('#btn_logout').on('click',function(e){
 });
 
 function loginSuccessful(username, picture){
-    $('#login_welcome').removeClass('hidden')
+    $('#login_welcome').removeClass('hidden');
     $('#welcome_picture').attr('src',picture);
     $('#welcome_username').html(username);
     $('#login_btns').addClass('hidden');
@@ -39,7 +40,7 @@ function loginSuccessful(username, picture){
     }, 3000);
     setTimeout(function(){
         $('#login_btns').removeClass('hidden');
-        $('#login_welcome').addClass('hidden')
+        $('#login_welcome').addClass('hidden');
     }, 5000);
 }
 

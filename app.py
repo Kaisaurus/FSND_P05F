@@ -36,7 +36,7 @@ def utility_processor():
                 return path
             else:
                 return placeholder
-        except:
+        except Exception as e:
             return placeholder
     return dict(exists=exists)
 
@@ -53,7 +53,7 @@ def showHome():
     # check if user is logged in
     try:
         user = getUserInfo(getSessionUserID())
-    except:
+    except Exception as e:
         user = None
 
     # pass a state string for extra security
@@ -74,7 +74,7 @@ def showCategories():
     # check if user is logged in
     try:
         user = getUserInfo(getSessionUserID())
-    except:
+    except Exception as e:
         user = None
 
     categories = list(reversed(session.query(Category).all()))
@@ -98,20 +98,22 @@ def showProducts():
         # check if user is logged in
         try:
             user = getUserInfo(getSessionUserID())
-        except:
+        except Exception as e:
             user = None
 
         return render_template('partials/block_products.html',
                                user=user,
                                products=products)
-    except Exception, e:
-        print 'bwoo'
+    except Exception as e:
         return jsonify(success=0, msg=str(e))
 
 
 @app.route('/new_product', methods=['POST'])
 def newProduct():
     if request.method == 'POST':
+        if not login_session['state']:
+            return jsonify(success=0, msg='Not correctly logged in: \
+            Login session state not set.')
         try:
             name = request.json['name']
             category = session.query(Category).filter_by(
@@ -124,20 +126,25 @@ def newProduct():
                 user_id=login_session['user_id'])
             session.add(newItem)
             session.commit()
-            print "succcess"
             return jsonify(success=1,
                            id=newItem.id,
                            msg="Product " + name + " added!")
-        except Exception, e:
+        except Exception as e:
             return jsonify(success=0, msg=str(e))
 
 
 @app.route('/edit_product', methods=['POST'])
 def editProduct():
     if request.method == 'POST':
+        if not login_session['state']:
+            return jsonify(success=0, msg='Login session state not set.')
         try:
             productID = request.json['id']
             product = session.query(Item).filter_by(id=productID).one()
+            if product.user_id != login_session['user_id']:
+                return jsonify(success=0,
+                               msg='Product cannot be edited because'
+                               'user id did not match.')
             productName = request.json['name']
             product.name = productName
             product.img_url = request.json['img_url']
@@ -149,30 +156,38 @@ def editProduct():
             session.add(product)
             session.commit()
             return jsonify(success=1,
-                           msg='Product '+productName+' succesfully edited.')
-        except Exception, e:
+                           msg='Product ' + productName +
+                           ' succesfully edited.')
+        except Exception as e:
             return jsonify(success=0, msg=str(e))
 
 
 @app.route('/delete_product', methods=['POST'])
 def deleteProduct():
     if request.method == 'POST':
+        if not login_session['state']:
+            return jsonify(success=0, msg='Login session state not set.')
         try:
             productID = request.json['id']
             product = session.query(Item).filter_by(id=productID).one()
-            # user_id=login_session['user_id'])
+            if product.user_id != login_session['user_id']:
+                return jsonify(success=0,
+                               msg='Product cannot be deleted because'
+                               'user id did not match.')
             session.delete(product)
             session.commit()
             return jsonify(success=1,
                            id=productID,
-                           msg='Product '+product.name+' deleted.')
-        except Exception, e:
+                           msg='Product ' + product.name + ' deleted.')
+        except Exception as e:
             return jsonify(success=0, msg=str(e))
 
 
 @app.route('/new_category', methods=['POST'])
 def newCategory():
     if request.method == 'POST':
+        if not login_session['state']:
+            return jsonify(success=0, msg='Login session state not set.')
         try:
             name = request.json['name']
             newCat = Category(
@@ -182,8 +197,9 @@ def newCategory():
             session.commit()
             return jsonify(success=1,
                            id=newCat.id,
+                           name=name,
                            msg="Category " + name + " added!")
-        except Exception, e:
+        except Exception as e:
             return jsonify(success=0, msg=str(e))
 
 
@@ -194,32 +210,34 @@ def deleteCategory():
             catID = request.json['id']
             itemsWithCat = session.query(
                 Item).filter_by(category_id=catID).all()
-            itemsWithCat
             if itemsWithCat:
-                print 'yes'
-                print itemsWithCat
                 return jsonify(success=0,
                                msg='Category cannot be deleted because it'
                                'is used by a product.')
             cat = session.query(Category).filter_by(id=catID).one()
-            # user_id=login_session['user_id'])
+            if cat.user_id != login_session['user_id']:
+                return jsonify(success=0,
+                               msg='Category cannot be deleted because'
+                               'user id did not match.')
             session.delete(cat)
             session.commit()
             return jsonify(success=1,
                            id=catID,
                            msg="Category " + cat.name + " deleted.")
-        except Exception, e:
+        except Exception as e:
             return jsonify(success=0, msg=str(e))
 
 
 @app.route('/edit_category', methods=['POST'])
 def editCategory():
     if request.method == 'POST':
-        # if getUserInfo(request.json['user_id']).id !=
-        # login_session['user_id']
         try:
             catID = request.json['id']
             editCat = session.query(Category).filter_by(id=catID).one()
+            if editCat.user_id != login_session['user_id']:
+                return jsonify(success=0,
+                               msg='Category cannot be edited because'
+                               'user id did not match.')
             oldName = editCat.name
             newName = request.json['name']
             editCat.name = newName
@@ -227,8 +245,9 @@ def editCategory():
             session.commit()
             return jsonify(success=1,
                            id=catID,
-                           msg='Category '+oldName+' changed to '+newName+'.')
-        except Exception, e:
+                           msg='Category ' + oldName + ' changed to ' +
+                           newName + '.')
+        except Exception as e:
             return jsonify(success=0, msg=str(e))
 
 
@@ -373,11 +392,6 @@ def fbconnect():
 
     return jsonify(username=login_session['username'],
                    picture=login_session['picture'])
-    '''
-    return render_template('welcome.html',
-                           username=login_session['username'],
-                           picture=login_session['picture'])
-    '''
 
 
 @app.route('/fbdisconnect')
@@ -417,12 +431,15 @@ def disconnect():
             gdisconnect()
             del login_session['credentials']
             del login_session['gplus_id']
+
         if login_session['provider'] == 'facebook':
             fbdisconnect()
             del login_session['facebook_id']
 
+        if login_session['email']:
+            del login_session['email']
+
         del login_session['username']
-        del login_session['email']
         del login_session['picture']
         del login_session['user_id']
         del login_session['provider']
@@ -433,13 +450,6 @@ def disconnect():
                        msg="Unable to disconnect because no \
                        user was connected.")
 
-
-def getSessionUserID():
-    try:
-        user_id = login_session['user_id']
-        return user_id
-    except:
-        return None
 
 # API endpoint (GET request)
 
@@ -456,11 +466,19 @@ def singleProductJSON(product_id):
     return jsonify(product=product.serialize)
 
 
+def getSessionUserID():
+    try:
+        user_id = login_session['user_id']
+        return user_id
+    except Exception as e:
+        return None
+
+
 def getFbUserID(fb_id):
     try:
         user = session.query(User).filter_by(fb_id=fb_id).one()
         return user.id
-    except:
+    except Exception as e:
         return None
 
 
@@ -468,7 +486,7 @@ def getUserID(email):
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
-    except:
+    except Exception as e:
         return None
 
 
@@ -480,7 +498,7 @@ def getUserInfo(user_id):
 def createUser(login_session):
     try:
         fb_id = login_session['facebook_id']
-    except:
+    except Exception as e:
         fb_id = ""
     newUser = User(name=login_session['username'],
                    email=login_session['email'],
@@ -490,6 +508,7 @@ def createUser(login_session):
     session.commit()
     user = session.query(User).filter_by(email=login_session['email']).one()
     return user.id
+
 
 if __name__ == '__main__':
     app.config.update(

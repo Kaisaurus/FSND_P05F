@@ -12,12 +12,10 @@ function bindCategoryBlockFunctions(){
 
     $('.btn_edit_category').on('click', function(e){
         var category_name = $(this).attr("data-name");
-        flashMsg(category_name);
         $('#edit_category_name').val(category_name);
         $('#edit_category_title').html(category_name);
         $('#btn_edit_category_submit').attr('data-id', $(this).attr("data-id"));
     });
-
 
     $('.btn_delete_category').on('click', function(e){
         var category_name = $(this).attr("data-name");
@@ -25,7 +23,6 @@ function bindCategoryBlockFunctions(){
         $('#delete_category_title').html(category_name);
         $('#btn_delete_category_submit').attr('data-id', $(this).attr("data-id"));
     });
-
 }
 
 function bindCategoryModalFunctions(){
@@ -39,7 +36,6 @@ function bindCategoryModalFunctions(){
         e.preventDefault();
         submit_delete_category($(this).attr('data-id'));
     });
-
 }
 
 function refreshCategories(){
@@ -59,9 +55,7 @@ function refreshCategories(){
 // uses the filter table plug-in so a search filter can be used
 $('.filter_table').filterTable({minRows: 0});
 
-
 // edit category functionality
-
 function submit_edit_category(id){
     // Ajax call to send new item to the backend
     var category_name = checkFieldContents('#edit_category_name',1);
@@ -73,9 +67,14 @@ function submit_edit_category(id){
             contentType: "application/json; charset=utf-8",
             url: '/edit_category',
             success: function(response){
-                updateCategoryDOM(category_name, id);
-                $("#modal_edit_category").modal('hide');
-                flashMsg(response.msg);
+                if(response.success == 1){
+                    updateCategoryDOM(category_name, id);
+                    $("#modal_edit_category").modal('hide');
+                    flashMsg(response.msg);
+                }
+                else{
+                  flashErrorMsg(error.msg, 'submit_edit_category');
+                }
             },
             error: function(error){
                 flashErrorMsg(error.msg, 'submit_edit_category');
@@ -94,7 +93,7 @@ function submit_delete_category(id){
         contentType: "application/json; charset=utf-8",
         url: '/delete_category',
         success: function(response){
-            if(response.success == 0){
+            if(response.success === 0){
                 flashErrorMsg(response.msg, 'submit_delete_category');
             }else{
                 $('option[value="'+id+'"]').remove();
@@ -109,7 +108,6 @@ function submit_delete_category(id){
     });
 }
 
-
 // New category functionality
 
 function submit_new_category(){
@@ -123,7 +121,7 @@ function submit_new_category(){
             contentType: "application/json; charset=utf-8",
             url: '/new_category',
             success: function(response) {
-                //cloneCategoryItem(category_name, response.id);
+                $('#new_product_category').prepend('<option value="'+response.id+'">'+response.name+'</option>');
                 refreshCategories();
                 $("#modal_new_category").modal('hide');
                 resetField('#new_category_name');
@@ -136,6 +134,8 @@ function submit_new_category(){
     }
 }
 
+
+
 function updateCategoryDOM(name, id){
     $('#tbody_category').find("a.btn_select[data-id='"+id+"']")
     .html(name)
@@ -147,11 +147,13 @@ function updateCategoryDOM(name, id){
     $('#tbody_category').find("a.btn_edit[data-id='"+id+"']")
     .attr('data-id', id)
     .attr('data-name', name);
+    $('#new_product_category').find('option[value="'+id+'"]')
+    .html(name);
 }
 
 function cloneCategoryItem(name, id){
     var item = $('#tbody_category').children(":first-child").clone(true,true);
-    $('#tbody_category').children(":first-child").before(item)
+    $('#tbody_category').children(":first-child").before(item);
     item.find(".btn_select").html(name);
     item.find('a').attr('data-id', id).attr('data-name', name);
     item.attr('data-id', id);

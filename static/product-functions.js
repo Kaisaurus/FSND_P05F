@@ -46,7 +46,7 @@ function bindProductModalFunctions(){
 }
 
 function refreshProducts(){
-    var selectedCategories = []
+    var selectedCategories = [];
     if($(".btn_select_selected")){
         $(".btn_select_selected").each( function( index, element ){
             selectedCategories.push($( this ).attr('data-id'));
@@ -74,7 +74,7 @@ function getProduct(product_id,type){
             if(type == 'view'){
                 var img_url = response.product.img_url;
                 if(img_url){
-                    $('#view_product_img').attr('src',img_url)
+                    $('#view_product_img').attr('src',img_url);
                 }
                 $('#view_product_title').html(response.product.name);
                 $('#view_product_name').html(response.product.name);
@@ -176,9 +176,8 @@ function submit_delete_product(id){
 function submit_new_product(){
     // Ajax call to send new item to the backend
     var product_name = checkFieldContents('#new_product_name',1);
-    var img_url = checkFieldContents('#new_product_img_url',0)
+    var img_url = checkFieldContents('#new_product_img_url',0);
     if(product_name){
-        flashMsg($('#new_product_category').val());
         $.ajax({
             data: JSON.stringify({
                 name: product_name,
@@ -209,7 +208,7 @@ function submit_new_product(){
 
 function cloneProductItem(name, id, img_url, category){
     var item = $('#block_products').children(":nth-child(2)").clone(true,true);
-    $('#block_products').children(":nth-child(2)").before(item)
+    $('#block_products').children(":nth-child(2)").before(item);
     item.find(".product_title").html(name);
     item.find('.product_category').html('[ '+category+' ]');
     img = item.find(".product_img");

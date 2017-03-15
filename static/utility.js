@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 $(document).ready(function(){
     $('.btn_hide_parent').on('click',function(){
         $(this).parent().addClass('hidden');
@@ -12,14 +13,14 @@ function replaceImg(img, img_url, placeholder){
 }
 
 function checkFieldContents(field, mark){
-    if($.trim($(field).val()) != ""){
-        return $(field).val()
+    if($.trim($(field).val()) !== ""){
+        return $(field).val();
     }else{
         if(mark == 1){
             $(field).parent().parent().addClass("has-error");
-            return null
-        }else if(mark == 0){
-            return ""
+            return null;
+        }else if(mark === 0){
+            return "";
         }
     }
 }
