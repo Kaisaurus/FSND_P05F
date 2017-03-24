@@ -11,6 +11,7 @@ from sqlalchemy.orm import sessionmaker
 from db_setup import Base, Category, Brand, Item, User
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
+from os import path
 
 # from handlers.bloghandler import BlogHandler
 
@@ -103,14 +104,16 @@ def showProducts():
         return render_template('partials/block_products.html',
                                user=user,
                                products=products)
-    except Exception, e:
-        print 'bwoo'
+    except Exception as e:
         return jsonify(success=0, msg=str(e))
 
 
 @app.route('/new_product', methods=['POST'])
 def newProduct():
     if request.method == 'POST':
+        if not login_session['state']:
+            return jsonify(success=0, msg='Not correctly logged in: \
+            Login session state not set.')
         try:
             name = request.json['name']
             category = session.query(Category).filter_by(
@@ -123,20 +126,25 @@ def newProduct():
                 user_id=login_session['user_id'])
             session.add(newItem)
             session.commit()
-            print "succcess"
             return jsonify(success=1,
                            id=newItem.id,
                            msg="Product " + name + " added!")
-        except Exception, e:
+        except Exception as e:
             return jsonify(success=0, msg=str(e))
 
 
 @app.route('/edit_product', methods=['POST'])
 def editProduct():
     if request.method == 'POST':
+        if not login_session['state']:
+            return jsonify(success=0, msg='Login session state not set.')
         try:
             productID = request.json['id']
             product = session.query(Item).filter_by(id=productID).one()
+            if product.user_id != login_session['user_id']:
+                return jsonify(success=0,
+                               msg='Product cannot be edited because'
+                               'user id did not match.')
             productName = request.json['name']
             product.name = productName
             product.img_url = request.json['img_url']
@@ -148,30 +156,38 @@ def editProduct():
             session.add(product)
             session.commit()
             return jsonify(success=1,
-                           msg='Product '+productName+' succesfully edited.')
-        except Exception, e:
+                           msg='Product ' + productName +
+                           ' succesfully edited.')
+        except Exception as e:
             return jsonify(success=0, msg=str(e))
 
 
 @app.route('/delete_product', methods=['POST'])
 def deleteProduct():
     if request.method == 'POST':
+        if not login_session['state']:
+            return jsonify(success=0, msg='Login session state not set.')
         try:
             productID = request.json['id']
             product = session.query(Item).filter_by(id=productID).one()
-            # user_id=login_session['user_id'])
+            if product.user_id != login_session['user_id']:
+                return jsonify(success=0,
+                               msg='Product cannot be deleted because'
+                               'user id did not match.')
             session.delete(product)
             session.commit()
             return jsonify(success=1,
                            id=productID,
-                           msg='Product '+product.name+' deleted.')
-        except Exception, e:
+                           msg='Product ' + product.name + ' deleted.')
+        except Exception as e:
             return jsonify(success=0, msg=str(e))
 
 
 @app.route('/new_category', methods=['POST'])
 def newCategory():
     if request.method == 'POST':
+        if not login_session['state']:
+            return jsonify(success=0, msg='Login session state not set.')
         try:
             name = request.json['name']
             newCat = Category(
@@ -181,8 +197,9 @@ def newCategory():
             session.commit()
             return jsonify(success=1,
                            id=newCat.id,
+                           name=name,
                            msg="Category " + name + " added!")
-        except Exception, e:
+        except Exception as e:
             return jsonify(success=0, msg=str(e))
 
 
@@ -193,32 +210,34 @@ def deleteCategory():
             catID = request.json['id']
             itemsWithCat = session.query(
                 Item).filter_by(category_id=catID).all()
-            itemsWithCat
             if itemsWithCat:
-                print 'yes'
-                print itemsWithCat
                 return jsonify(success=0,
                                msg='Category cannot be deleted because it'
                                'is used by a product.')
             cat = session.query(Category).filter_by(id=catID).one()
-            # user_id=login_session['user_id'])
+            if cat.user_id != login_session['user_id']:
+                return jsonify(success=0,
+                               msg='Category cannot be deleted because'
+                               'user id did not match.')
             session.delete(cat)
             session.commit()
             return jsonify(success=1,
                            id=catID,
                            msg="Category " + cat.name + " deleted.")
-        except Exception, e:
+        except Exception as e:
             return jsonify(success=0, msg=str(e))
 
 
 @app.route('/edit_category', methods=['POST'])
 def editCategory():
     if request.method == 'POST':
-        # if getUserInfo(request.json['user_id']).id !=
-        # login_session['user_id']
         try:
             catID = request.json['id']
             editCat = session.query(Category).filter_by(id=catID).one()
+            if editCat.user_id != login_session['user_id']:
+                return jsonify(success=0,
+                               msg='Category cannot be edited because'
+                               'user id did not match.')
             oldName = editCat.name
             newName = request.json['name']
             editCat.name = newName
@@ -226,8 +245,9 @@ def editCategory():
             session.commit()
             return jsonify(success=1,
                            id=catID,
-                           msg='Category '+oldName+' changed to '+newName+'.')
-        except Exception, e:
+                           msg='Category ' + oldName + ' changed to ' +
+                           newName + '.')
+        except Exception as e:
             return jsonify(success=0, msg=str(e))
 
 
@@ -244,7 +264,6 @@ def gconnect():
             'client_secret_g.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
-        print credentials.access_token
 
     except FlowExchangeError:
         response = make_response(
@@ -349,7 +368,7 @@ def fbconnect():
 
     try:
         login_session['email'] = data['email']
-    except KeyError, e:
+    except KeyError as e:
         # No FB account available
         print 'KeyError "%s"' % str(e)
         list_name = data['name'].split(' ')
@@ -385,12 +404,12 @@ def fbdisconnect():
 @app.route('/gdisconnect')
 def gdisconnect():
     credentials = login_session.get('credentials')
+
     if credentials is None:
         response = make_response(
             json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         print response
-
     access_token = credentials
     url = 'https://accounts.google.com/o/oauth2/revoke?token={}'.format(
         access_token)
@@ -411,12 +430,15 @@ def disconnect():
             gdisconnect()
             del login_session['credentials']
             del login_session['gplus_id']
+
         if login_session['provider'] == 'facebook':
             fbdisconnect()
             del login_session['facebook_id']
 
+        if login_session['email']:
+            del login_session['email']
+
         del login_session['username']
-        del login_session['email']
         del login_session['picture']
         del login_session['user_id']
         del login_session['provider']
@@ -427,13 +449,6 @@ def disconnect():
                        msg="Unable to disconnect because no \
                        user was connected.")
 
-
-def getSessionUserID():
-    try:
-        user_id = login_session['user_id']
-        return user_id
-    except Exception as e:
-        return None
 
 # API endpoint (GET request)
 
@@ -448,6 +463,14 @@ def productsJSON():
 def singleProductJSON(product_id):
     product = session.query(Item).filter_by(id=product_id).one()
     return jsonify(product=product.serialize)
+
+
+def getSessionUserID():
+    try:
+        user_id = login_session['user_id']
+        return user_id
+    except Exception as e:
+        return None
 
 
 def getFbUserID(fb_id):
@@ -487,6 +510,8 @@ def createUser(login_session):
 
 
 if __name__ == '__main__':
-    app.debug = True
-    app.secret_key = 'super_secret_key'
+    app.config.update(
+        TEMPLATES_AUTO_RELOAD=True,
+        DEBUG=True,
+        SECRET_KEY='super_secret_key')
     app.run(host='0.0.0.0', port=5000)
