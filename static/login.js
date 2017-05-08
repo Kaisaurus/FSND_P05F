@@ -70,7 +70,7 @@ function signInCallback(authResult){
 // Facebook OAuth2 login code
 window.fbAsyncInit = function() {
     FB.init({
-      appId      : '1649736768663631',
+      appId      : '1874198809501711',
       cookie     : true,
       xfbml      : true,
       version    : 'v2.8'
