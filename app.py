@@ -16,14 +16,15 @@ from os import path
 # from handlers.bloghandler import BlogHandler
 
 app = Flask(__name__)
-engine = create_engine('sqlite:///catalog.db')
+engine = create_engine('postgresql://catalog:catalog@localhost/catalog')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 CLIENT_ID = json.loads(
-    open('client_secret_g.json', 'r').read())['web']['client_id']
+    open('/var/www/FSND_P05F/client_secret_g.json',
+         'r').read())['web']['client_id']
 
 
 @app.context_processor
@@ -261,7 +262,7 @@ def gconnect():
     try:
         # Upgrade the authorization code into a credentials object
         oauth_flow = flow_from_clientsecrets(
-            'client_secret_g.json', scope='')
+            '/var/www/FSND_P05F/client_secret_g.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
 
@@ -342,12 +343,10 @@ def fbconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     access_token = request.data
-    app_id = json.loads(open('client_secrets_fb.json', 'r').read())[
-        'web'][
-        'app_id']
-    app_secret = json.loads(open('client_secrets_fb.json', 'r').read())[
-        'web'][
-        'app_secret']
+    app_id = json.loads(open('/var/www/FSND_P05F/client_secrets_fb.json',
+                             'r').read())['web']['app_id']
+    app_secret = json.loads(open('/var/www/FSND_P05F/client_secrets_fb.json',
+                                 'r').read())['web']['app_secret']
     url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exch' \
         'ange_token&client_id={}&client_secret={}&fb_exchange_token={}'.format(
             app_id, app_secret, access_token)
