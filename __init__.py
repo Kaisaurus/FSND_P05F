@@ -515,4 +515,4 @@ if __name__ == '__main__':
         TEMPLATES_AUTO_RELOAD=True,
         DEBUG=True,
         SECRET_KEY='super_secret_key')
-    app.run(host='0.0.0.0', port=5000)
+    app.run()
